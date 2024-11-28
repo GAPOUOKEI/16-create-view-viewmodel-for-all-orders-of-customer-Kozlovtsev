@@ -13,26 +13,28 @@ namespace Pizza
 {
     class MainWindowViewModel : BindableBase
     {
-        private AddEditCustomerViewModel _addEditCustomerVewModel;
+        private AddEditCustomerViewModel _addEditCustomerViewModel;
         private CustomerListViewModel _customerListViewModel;
         private OrderPerpViewModel _orderPrepViewModel;
         private OrderViewModer _orderViewModel;
 
         private ICustomerRepository _customerRepository = new CustomerRepository();
+        private IOrderRepository _orderRepository = new OrderRepository();
 
         public MainWindowViewModel()
         {
             NavigationCommand = new RelayCommand<string>(OnNavigation);
-            //_customerListViewModel = new CustomerListViewModel(new CustomerRepository()) ;
-            //_addEditCustomerVewModel = new AddEditCustomerViewModel(new CustomerRepository()) ; 
-            _customerListViewModel = RepoContainer.Container.Resolve<CustomerListViewModel>();  
-            _addEditCustomerVewModel = RepoContainer.Container.Resolve<AddEditCustomerViewModel>();
 
-            _customerListViewModel.AddCustomerRequested +=NavigationToAddCustomer;
+            _customerListViewModel = new CustomerListViewModel(_customerRepository, _orderRepository);
+            _addEditCustomerViewModel = RepoContainer.Container.Resolve<AddEditCustomerViewModel>();
+            //_orderViewModel = RepoContainer.Container.Resolve<OrderViewModer>();
+
+            _customerListViewModel.AddCustomerRequested += NavigationToAddCustomer;
             _customerListViewModel.EditCustomerRequested += NavigationToEditCustomer;
             _customerListViewModel.PlaceOrderRequested += NavigateToOrder;
-           
+            _customerListViewModel.ViewOrdersRequested += OnViewOrdersRequested; // Добавляем обработчик
         }
+
         private BindableBase _currentViewModel;
         public BindableBase CurrentViewModel
         {
@@ -42,7 +44,6 @@ namespace Pizza
 
         public RelayCommand<string> NavigationCommand { get; private set; }
 
-        //открывать список клиентов
         private void OnNavigation(string dest)
         {
             switch (dest)
@@ -51,37 +52,35 @@ namespace Pizza
                     CurrentViewModel = _orderPrepViewModel; break;
                 case "customers":
                 default:
-                       CurrentViewModel = _customerListViewModel; break;
+                    CurrentViewModel = _customerListViewModel; break;
             }
         }
-        
-        //открывать окно для редактирования клиента
+
         private void NavigationToEditCustomer(Customer customer)
         {
-            _addEditCustomerVewModel.IsEditeMode = true; 
-            _addEditCustomerVewModel.SetCustomer(customer);
-            CurrentViewModel = _addEditCustomerVewModel;
-
+            _addEditCustomerViewModel.IsEditeMode = true;
+            _addEditCustomerViewModel.SetCustomer(customer);
+            CurrentViewModel = _addEditCustomerViewModel;
         }
 
-        //открывать окно для добавления клиента
-        //private void NavigationToAddCustomer(Customer cust)----------------------------
         private void NavigationToAddCustomer()
         {
-            _addEditCustomerVewModel.IsEditeMode = false;
-            _addEditCustomerVewModel.SetCustomer(new Customer
-            {
-                Id = Guid.NewGuid(),
-            });
-            CurrentViewModel = _addEditCustomerVewModel;
-            
+            _addEditCustomerViewModel.IsEditeMode = false;
+            _addEditCustomerViewModel.SetCustomer(new Customer { Id = Guid.NewGuid() });
+            CurrentViewModel = _addEditCustomerViewModel;
         }
 
-        //окно для оформления заказа
         private void NavigateToOrder(Customer customer)
         {
             _orderViewModel.Id = customer.Id;
             CurrentViewModel = _orderViewModel;
         }
+
+        private void OnViewOrdersRequested(Customer customer)
+        {
+            _orderViewModel.SetCustomer(customer);
+            CurrentViewModel = _orderViewModel;
+        }
     }
+
 }
