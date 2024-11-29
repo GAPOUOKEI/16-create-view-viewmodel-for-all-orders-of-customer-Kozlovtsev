@@ -16,7 +16,6 @@ namespace Pizza.ViewModels
         public CustomerListViewModel(ICustomerRepository repository, IOrderRepository orderRepository)
         {
             _repository = repository;
-            _orderRepository = orderRepository;
 
             Customers = new ObservableCollection<Customer>();
             LoadCustomers();
@@ -24,8 +23,9 @@ namespace Pizza.ViewModels
             PlaceOrderCommand = new RelayCommand<Customer>(OnPlaceOrder);
             AddCustomerCommand = new RelayCommand(OnAddCustomer);
             EditCustomerCommand = new RelayCommand<Customer>(OnEditCustomer);
-            ViewOrdersCommand = new RelayCommand<Customer>(OnViewOrders); //
             ClearSearchInput = new RelayCommand(OnClearSearch);
+
+            CheckOrdersCustomerCommand = new RelayCommand<Customer>(CheckOrderCustomerCommand);
         }
 
         private ObservableCollection<Customer>? _customers;
@@ -70,13 +70,17 @@ namespace Pizza.ViewModels
         public RelayCommand<Customer> PlaceOrderCommand { get; private set; }
         public RelayCommand AddCustomerCommand { get; private set; }
         public RelayCommand<Customer> EditCustomerCommand { get; private set; }
-        public RelayCommand<Customer> ViewOrdersCommand { get; private set; } //
         public RelayCommand ClearSearchInput { get; private set; }
+
+        public RelayCommand<Customer> CheckOrdersCustomerCommand { get; private set; }
 
         public event Action<Customer> PlaceOrderRequested = delegate { };
         public event Action AddCustomerRequested = delegate { };
         public event Action<Customer> EditCustomerRequested = delegate { };
-        public event Action<Customer> ViewOrdersRequested = delegate { }; //
+
+
+        public event Action<Customer> CheckOrdersCustomerRequest = delegate { };
+
         private void OnPlaceOrder(Customer customer)
         {
             PlaceOrderRequested(customer);
@@ -97,10 +101,9 @@ namespace Pizza.ViewModels
             SearchInput = null;
         }
 
-        private async void OnViewOrders(Customer customer) //
+        public void CheckOrderCustomerCommand(Customer customer)
         {
-            var orders = await _orderRepository.GetOrdersByCustomerAsync(customer.Id);
-            ViewOrdersRequested?.Invoke(customer);
+            CheckOrdersCustomerRequest(customer);
         }
     }
 }

@@ -24,15 +24,18 @@ namespace Pizza
         public MainWindowViewModel()
         {
             NavigationCommand = new RelayCommand<string>(OnNavigation);
-
-            _customerListViewModel = new CustomerListViewModel(_customerRepository, _orderRepository);
+            //_customerListViewModel = new CustomerListViewModel(new CustomerRepository()) ;
+            //_addEditCustomerVewModel = new AddEditCustomerViewModel(new CustomerRepository()) ; 
+            _customerListViewModel = RepoContainer.Container.Resolve<CustomerListViewModel>();
             _addEditCustomerViewModel = RepoContainer.Container.Resolve<AddEditCustomerViewModel>();
-            //_orderViewModel = RepoContainer.Container.Resolve<OrderViewModer>();
+            _orderViewModel = RepoContainer.Container.Resolve<OrderViewModer>();
 
             _customerListViewModel.AddCustomerRequested += NavigationToAddCustomer;
             _customerListViewModel.EditCustomerRequested += NavigationToEditCustomer;
+
             _customerListViewModel.PlaceOrderRequested += NavigateToOrder;
-            _customerListViewModel.ViewOrdersRequested += OnViewOrdersRequested; // Добавляем обработчик
+            _customerListViewModel.CheckOrdersCustomerRequest += NavigationToOrdersCustomer;
+            _orderViewModel = new OrderViewModer(_orderRepository);
         }
 
         private BindableBase _currentViewModel;
@@ -76,9 +79,9 @@ namespace Pizza
             CurrentViewModel = _orderViewModel;
         }
 
-        private void OnViewOrdersRequested(Customer customer)
+        private void NavigationToOrdersCustomer(Customer customer)
         {
-            _orderViewModel.SetCustomer(customer);
+            _orderViewModel.LoadOrdersCustomer(customer);
             CurrentViewModel = _orderViewModel;
         }
     }

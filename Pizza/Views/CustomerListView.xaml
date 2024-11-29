@@ -72,14 +72,14 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                 <!--Кнопка для просмотра заказов клиента--> 
+                 <!--Кнопка для просмотра заказов клиента-->
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Просмотр заказов"
-                                    Command="{Binding DataContext.ViewOrdersCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                    CommandParameter="{Binding}"
-                                    Margin="5"/>
+                            <Button Content="Просмотр всех заказов"
+                             Command="{Binding DataContext.CheckOrdersCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                             CommandParameter="{Binding }"
+                             Margin="5"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
