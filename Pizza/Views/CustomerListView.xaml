@@ -13,7 +13,7 @@
             <i:InvokeCommandAction Command="{Binding LoadCustomers}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -36,8 +36,7 @@
                         HorizontalAlignment="Right">
                 <TextBlock Text="поиск:"
                            Margin="5"/>
-                <TextBox Text="{Binding SearchInput,
-                    UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding SearchInput, UpdateSourceTrigger=PropertyChanged}"
                          Width="200"/>
                 <Button Content="X"
                         Command="{Binding ClearSearchInput}"/>
@@ -49,15 +48,13 @@
                   CanUserAddRows="False"
                   Grid.Row="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding FullName}"
-                     Width="*"/>
+                <DataGridTextColumn Binding="{Binding FullName}" Width="*"/>
 
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="оформить заказ"
-                                    Command="{Binding DataContext.PlaceOrderCommand,
-                                        RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    Command="{Binding DataContext.PlaceOrderCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                     CommandParameter="{Binding}"
                                     Margin="5"/>
                         </DataTemplate>
@@ -68,18 +65,26 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="редактировать"
-                                    Command="{Binding DataContext.EditCustomerCommand,
-                                        RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    Command="{Binding DataContext.EditCustomerCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                     CommandParameter="{Binding}"
                                     Margin="5"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-            </DataGrid.Columns>
-           
-        </DataGrid>
 
-     
-            
+                 <!--Кнопка для просмотра заказов клиента-->
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Просмотр всех заказов"
+                             Command="{Binding DataContext.CheckOrdersCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                             CommandParameter="{Binding }"
+                             Margin="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
